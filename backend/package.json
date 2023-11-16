@@ -6,12 +6,13 @@
   "scripts": {
     "dev": "bun --hot index.ts",
     "build": "bun index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "bun test"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "latest",
+    "vitest": "^0.34.6"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
