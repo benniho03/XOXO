@@ -7,8 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getSocket({username, gameId}: {username: string, gameId: string}){
+  console.log(process.env)
   try {
-    const socket = new WebSocket(`ws://localhost:8080?username=${username}&gameId=${gameId}`)
+    const socket = new WebSocket(`ws://xoxo-ihvp.vercel.app/?username=${username}&gameId=${gameId}`)
     socket.onerror = (error) => {
       throw error
     }
@@ -18,7 +19,6 @@ export function getSocket({username, gameId}: {username: string, gameId: string}
   }
 
 }
-
 
 export const GlutenFont = localFont({
   src: '../../public/fonts/Gluten-VariableFont_slnt,wght.ttf',

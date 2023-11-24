@@ -16,13 +16,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={GlutenFont.className}>
+      <body className={`${GlutenFont.className} bg-[url('./paper-bg.jpg')] bg-cover `}
+      style={{minHeight: "100vh"}}>
         <Header />
-        <main className=''>
+        <main className='flex flex-col justify-around items-end'>
           <Toaster />
 
           {children}
         </main>
+        <p className='text-center'><a href="https://www.freepik.com/free-vector/crumpled-blue-checkered-paper-texture-realisric_29567568.htm">Image by upklyak</a> on Freepik</p>
       </body>
     </html>
   )

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import './game.css'
 import LoadingSpinner from './loading-spinner';
-import { TrophyIcon, ClipboardIcon } from '@heroicons/react/24/outline';
+import { TrophyIcon, ClipboardIcon, BoltIcon } from '@heroicons/react/24/outline';
 
 
 type Role = "X" | "O"
@@ -63,7 +63,13 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
 
     if (!players[1].name) return (
         <>
-            <LoadingSpinner />
+            <div className='mb-5'>
+                <LoadingSpinner />
+            </div>
+            <div className='flex flex-col items-center'>
+                <button onClick={() => navigator.clipboard.writeText(gameId)}><ClipboardIcon className='h-6 w-6 hover:cursor-pointer hover:text-slate-600' /></button>
+                <p className='text-xl'>Game ID: {gameId}</p>
+            </div>
         </>
     )
 
@@ -78,20 +84,29 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
 
     return (
         <div className='mx-auto'>
-            <div className='flex justify-end items-center'>
-                <p className='text-xl'>Game ID: {gameId}</p>
-                <button onClick={() => navigator.clipboard.writeText(gameId)}><ClipboardIcon className='h-6 w-6 hover:cursor-pointer hover:text-slate-600' /></button>
+            <div className='flex justify-center items-center relative mb-5'>
+                <div>
+                    <div className='flex text-center text-2xl justify-center gap-4 items-center'>
+                        <p>{players[0].name || "???"}</p>
+                        <BoltIcon className='h-6 w-6 mb-1' />
+                        <p>{players[1].name || "???"}</p>
+                    </div>
+                    <div>
+                        <p className='text-center'>{activePlayer === role ? "It's your turn!" : "Waiting for opponent..."}</p>
+                    </div>
+                </div>
+                <div className='absolute right-0 flex flex-col items-center'>
+                    <button onClick={() => navigator.clipboard.writeText(gameId)}><ClipboardIcon className='h-6 w-6 hover:cursor-pointer hover:text-slate-600' /></button>
+                    <p className='text-xl'>Game ID: {gameId}</p>
+                </div>
             </div>
-            <h2 className='text-center'><span>{players[0].name || "???"}</span> VS <span>{players[1].name || "???"}</span></h2>
-            <p>You play: {role}</p>
-            <p>{activePlayer === role ? "It's your turn!" : "Waiting for opponent..."}</p>
             <div className='flex flex-col items-center'>
                 {board.map((row, rowIndex) => {
                     return <div className='flex row' key={rowIndex}>
                         {
                             row.map((squareValue: null | "X" | "O", colIndex: number) => {
                                 return <button
-                                    className={`${GlutenFont.className} cell border-slate-900 border-2 font-bold text-6xl w-32 h-32 hover:cursor-pointer hover:bg-slate-100 hover:disabled:cursor-not-allowed hover:disabled:bg-white`}
+                                    className={`${GlutenFont.className} cell border-slate-900 border-2 font-bold text-6xl w-32 h-32 hover:cursor-pointer hover:bg-slate-100  hover:disabled:cursor-not-allowed hover:disabled:bg-white`}
                                     key={colIndex}
                                     onClick={() => sendMoveToServer({ row: rowIndex, col: colIndex, playerIdentity: role })}
                                     disabled={squareValue !== null || activePlayer !== role}
@@ -101,7 +116,7 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
                     </div>
                 })}
             </div>
-        </div>
+        </div >
     )
 }
 

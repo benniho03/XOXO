@@ -4,7 +4,6 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { getSocket } from "@/lib/utils";
 import toast from "react-hot-toast";
-import LoadingSpinner from "./loading-spinner";
 
 export default function UsernameComponent({
 	setSocket,
@@ -27,6 +26,8 @@ export default function UsernameComponent({
 	function login(
 		{ setSocket, username, gameId }: { setSocket: (socket: WebSocket) => void; username: string; gameId: string }
 	) {
+		if(!username) return toast.error("Please enter a username")
+		if(!gameId) gameId = crypto.getRandomValues(new Uint32Array(1))[0].toString(16)
 		const newSocket = getSocket({ username, gameId })
 		if (!newSocket) return toast("Error connecting to server")
 		setUsername(username);

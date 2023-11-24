@@ -26,7 +26,7 @@ export default function Home() {
 	});
 
 	return (
-		<div className="container py-3">
+		<div className="container py-3 ">
 			<Game gameId={gameId} socket={socket} username={username} />
 		</div>
 	);
