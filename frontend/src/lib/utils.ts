@@ -9,10 +9,8 @@ export function cn(...inputs: ClassValue[]) {
 export function getSocket({username, gameId}: {username: string, gameId: string}){
   console.log(process.env)
   try {
-    const socket = new WebSocket(`ws://xoxo-ihvp.vercel.app/?username=${username}&gameId=${gameId}`)
-    socket.onerror = (error) => {
-      throw error
-    }
+    console.log("URL", process.env.WS_URL)
+    const socket = new WebSocket(`${process.env.WS_URL}/?username=${username}&gameId=${gameId}`)
     return socket
   } catch (error) {
     return console.log(error)

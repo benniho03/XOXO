@@ -4,7 +4,7 @@ const nextConfig = {
     appDir: true,
   },
   env: {
-    WS_URL: "ws://localhost:8080"
+    WS_URL: "wss://xoxo-backend.onrender.com/"
   }
 }
 
