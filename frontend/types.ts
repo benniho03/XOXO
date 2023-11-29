@@ -17,6 +17,8 @@ type Message = | {
   type: "win",
   role: PlayerIdentity,
   username: string,
+} | {
+  type: "draw"
 }
 
 type SquareValue = "X" | "O" | null

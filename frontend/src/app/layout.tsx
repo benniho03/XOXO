@@ -24,7 +24,7 @@ export default function RootLayout({
 
           {children}
         </main>
-        <p className='text-center'><a href="https://www.freepik.com/free-vector/crumpled-blue-checkered-paper-texture-realisric_29567568.htm">Image by upklyak</a> on Freepik</p>
+        {/* <p className='text-center'><a href="https://www.freepik.com/free-vector/crumpled-blue-checkered-paper-texture-realisric_29567568.htm">Image by upklyak</a> on Freepik</p> */}
       </body>
     </html>
   )

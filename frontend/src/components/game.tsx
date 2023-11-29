@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import './game.css'
 import LoadingSpinner from './loading-spinner';
-import { TrophyIcon, ClipboardIcon, BoltIcon } from '@heroicons/react/24/outline';
+// @ts-expect-error
+import { TrophyIcon, ClipboardIcon, BoltIcon, ScaleIcon } from '@heroicons/react/24/outline';
 
 
 type Role = "X" | "O"
@@ -14,36 +15,46 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
     const [activePlayer, setActivePlayer] = useState<Role>("X")
     const [role, setRole] = useState<Role>("X")
     const [winner, setWinner] = useState<string | null>(null)
+    const [draw, setDraw] = useState(false)
+
+    socket.removeEventListener("message", (event) => {
+        handleMessage(event);
+    });
 
     socket.addEventListener("message", (event) => {
+        handleMessage(event);
+    });
+
+
+    function handleMessage(event: MessageEvent<any>) {
         const serverMessage = JSON.parse(event.data) as Message;
 
         if (serverMessage.type === "move") {
-            setBoard(serverMessage.board)
-            setActivePlayer(serverMessage.activePlayer)
+            setBoard(serverMessage.board);
+            setActivePlayer(serverMessage.activePlayer);
         }
 
         if (serverMessage.type === "join") {
-            setPlayers(serverMessage.players)
+            setPlayers(serverMessage.players);
 
-            setRole(serverMessage.players.find((player) => player.name === username)?.role || "X")
+            setRole(serverMessage.players.find((player) => player.name === username)?.role || "X");
 
-            console.log(`${serverMessage.username} has joined the game!`)
+            console.log(`${serverMessage.username} has joined the game!`);
 
-            toast.success(`${serverMessage.username} has joined the game!`, {
-                icon: '👋🏼',
-                duration: 1500,
-                className: 'border border-green-500'
-            })
+            // toast.success(`${serverMessage.username} has joined the game!`, {
+            //     icon: '👋🏼',
+            //     duration: 1500,
+            //     className: 'border border-green-500'
+            // });
         }
 
         if (serverMessage.type === "win") {
-            setWinner(serverMessage.username)
+            setWinner(serverMessage.username);
             toast.success(`${serverMessage.username} has won the game!`, {
                 icon: '🏆',
                 duration: 1500,
                 className: 'border border-green-500'
-            })
+            });
         }
 
         if (serverMessage.type === "error") {
@@ -51,11 +62,14 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
                 icon: '🚨',
                 duration: 1500,
                 className: 'border border-red-500'
-            })
+            });
         }
 
-    });
-
+        if (serverMessage.type === "draw") {
+            toast("Draw!");
+            setDraw(true);
+        }
+    }
 
     function sendMoveToServer({ row, col, playerIdentity }: { row: number, col: number, playerIdentity: Role }) {
         socket.send(JSON.stringify({ type: "move", row, col, player: playerIdentity }))
@@ -80,6 +94,15 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
             </div>
             <p>{winner} has won the game!</p>
         </div>
+    )
+
+    if(draw) return (
+        <div className="flex justify-center items-center flex-col">
+        <div className="h-24 w-24 text-slate-900">
+            <ScaleIcon />
+        </div>
+        <p>Game has resulted in a draw!</p>
+    </div>
     )
 
     return (
