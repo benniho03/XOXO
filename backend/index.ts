@@ -1,3 +1,4 @@
+import { ServerWebSocket } from "bun";
 import { Message, GameInfo, GameState, MoveMessage, Board } from "./types";
 const games = new Map<string, GameState>();
 
@@ -7,9 +8,11 @@ const server = Bun.serve<GameInfo>({
 		const username = url.searchParams.get("username");
 		const gameId = url.searchParams.get("gameId");
 
+
 		if (!username || !gameId) return new Response("Missing username or gameId", { status: 400 });
 
 		const game = games.get(gameId)
+
 		if (game && game.players[1].name) return new Response("Game is full", { status: 400 })
 
 		const success = server.upgrade(req, {
@@ -39,7 +42,7 @@ const server = Bun.serve<GameInfo>({
 			game.players[1].name = client.data.username
 
 		},
-		async message(client, message): Promise<any> {
+		async message(client, message) {
 
 			const clientMessage: Message = JSON.parse(message.toString());
 
@@ -55,9 +58,13 @@ const server = Bun.serve<GameInfo>({
 					return handleJoin({ username: client.data.username, game })
 				case "move":
 					console.log("Move")
-					return handleMove({ clientMessage, game });
+					return handleMove({ clientMessage, game });	
+				case "restart":
+					handleRestart(client, game);
+					return
 				default:
-					console.log("Errpr")
+					console.log(clientMessage.type)
+					console.log("Error")
 					return handleError({ gameId: client.data.gameId, errorMessage: "Invalid message type" })
 			}
 
@@ -79,6 +86,23 @@ const server = Bun.serve<GameInfo>({
 });
 
 console.log(`🚀 Listening on localhost: ${server.port} 🚀`);
+
+function handleRestart(client: ServerWebSocket<GameInfo>, game: GameState) {
+	console.log("Restart");
+	if(!game.restart){
+		game.restart = true;
+		return
+	}
+	const newGame = createDefaultGame(client.data.gameId);
+	newGame.players = [...game.players];
+	server.publish(
+		client.data.gameId,
+		JSON.stringify({
+			type: "restart",
+		})
+	);
+	games.set(client.data.gameId, newGame);
+}
 
 function handleError({ gameId, errorMessage }: { gameId: string, errorMessage: string }) {
 	server.publish(gameId, JSON.stringify({ type: "error", errorMessage }));
@@ -159,7 +183,8 @@ function createDefaultGame(gameId: string): GameState {
 		gameId,
 		board: createBoard(3),
 		activePlayer: "X" as const,
-		players: [{ name: "", role: "X" as const }, { name: "", role: "O" as const }]
+		players: [{ name: "", role: "X" as const }, { name: "", role: "O" as const }],
+		restart: false
 	}
 }
 

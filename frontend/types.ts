@@ -19,6 +19,9 @@ type Message = | {
   username: string,
 } | {
   type: "draw"
+} | {
+  type: "restart"
+  
 }
 
 type SquareValue = "X" | "O" | null

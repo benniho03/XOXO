@@ -7,6 +7,9 @@ export type Message =
     message: string;
   }
   | MoveMessage
+  | {
+    type: "restart"
+  }
 
 export type MoveMessage = {
   type: "move";
@@ -28,5 +31,6 @@ export type GameState = {
   gameId: string
   board:  Board
   activePlayer: "X" | "O",
-  players: {name: string, role: "X" | "O"}[]
+  players: {name: string, role: "X" | "O"}[],
+  restart: boolean
 }

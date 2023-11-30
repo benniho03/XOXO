@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import './game.css'
 import LoadingSpinner from './loading-spinner';
-// @ts-expect-error
 import { TrophyIcon, ClipboardIcon, BoltIcon, ScaleIcon } from '@heroicons/react/24/outline';
+import RestartButton from './restart-button';
+import { set } from 'zod';
 
 
 type Role = "X" | "O"
@@ -16,10 +17,6 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
     const [role, setRole] = useState<Role>("X")
     const [winner, setWinner] = useState<string | null>(null)
     const [draw, setDraw] = useState(false)
-
-    socket.removeEventListener("message", (event) => {
-        handleMessage(event);
-    });
 
     socket.addEventListener("message", (event) => {
         handleMessage(event);
@@ -41,11 +38,11 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
 
             console.log(`${serverMessage.username} has joined the game!`);
 
-            // toast.success(`${serverMessage.username} has joined the game!`, {
-            //     icon: '👋🏼',
-            //     duration: 1500,
-            //     className: 'border border-green-500'
-            // });
+            toast.success(`${serverMessage.username} has joined the game!`, {
+                icon: '👋🏼',
+                duration: 1500,
+                className: 'border border-green-500'
+            });
         }
 
         if (serverMessage.type === "win") {
@@ -68,6 +65,16 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
         if (serverMessage.type === "draw") {
             toast("Draw!");
             setDraw(true);
+        }
+
+        if(serverMessage.type === "restart") {
+            console.log("Restarting game")
+            // switch names and roles
+            setPlayers([players[1], players[0]]);
+            setBoard(createBoard(3));
+            setWinner(null);
+            setDraw(false);
+            setActivePlayer("X");
         }
     }
 
@@ -93,6 +100,7 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
                 <TrophyIcon />
             </div>
             <p>{winner} has won the game!</p>
+            <RestartButton socket={socket} gameId={gameId} />
         </div>
     )
 
@@ -102,6 +110,7 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
             <ScaleIcon />
         </div>
         <p>Game has resulted in a draw!</p>
+        <RestartButton socket={socket} gameId={gameId} />
     </div>
     )
 
