@@ -126,11 +126,14 @@ function handleMove({ clientMessage, game }: { clientMessage: MoveMessage, game:
 	server.publish(game.gameId, JSON.stringify({ type: "move", board: game.board, activePlayer: game.activePlayer }));
 
 	const winningRole = checkForWinner(game.board)
-	if (winningRole) {
+	const winner = game.players.find(player => player.role === winningRole)
+
+	if (winningRole && winner) {
+		winner.wins++
 		server.publish(game.gameId, JSON.stringify({
 			type: "win",
 			role: winningRole,
-			username: game.players.find(player => player.role === winningRole)?.name
+			username: winner.name
 		}))
 		return
 	}
@@ -187,7 +190,7 @@ function createDefaultGame(gameId: string): GameState {
 		gameId,
 		board: createBoard(3),
 		activePlayer: "X" as const,
-		players: [{ name: "", role: "X" as const, playerId: "" }, { name: "", role: "O" as const, playerId: "" }],
+		players: [{ name: "", role: "X" as const, playerId: "", wins: 0 }, { name: "", role: "O" as const, playerId: "", wins: 0 }],
 		restart: false
 	}
 }

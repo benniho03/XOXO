@@ -31,7 +31,8 @@ export type Board = Cell[][]
 export type Player = {
   name: string,
   role: "X" | "O",
-  playerId: string
+  playerId: string,
+  wins: number
 }
 
 export type GameState = {

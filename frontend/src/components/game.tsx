@@ -10,7 +10,7 @@ type Role = "X" | "O"
 
 export default function Game({ socket, username, gameId, playerId }: { socket: WebSocket, username: string, gameId: string, playerId: string }) {
     const [board, setBoard] = useState(createBoard(3))
-    const [players, setPlayers] = useState<Player[]>([{ name: "", role: "X", playerId: "" }, { name: "", role: "O", playerId: "" }]);
+    const [players, setPlayers] = useState<Player[]>(getStartingPlayers());
     const [activePlayer, setActivePlayer] = useState<Role>("X")
     const [role, setRole] = useState<Role>("X")
     const [winner, setWinner] = useState<string | null>(null)
@@ -121,10 +121,15 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
         <div className='mx-auto'>
             <div className='flex justify-center items-center relative mb-5'>
                 <div>
-                    <div className='flex text-center text-2xl justify-center gap-4 items-center'>
+                    <div className='flex text-center text-2xl justify-center gap-4 items-center font-bold'>
                         <p>{players[0].name || "???"}</p>
                         <BoltIcon className='h-6 w-6 mb-1' />
                         <p>{players[1].name || "???"}</p>
+                    </div>
+                    <div className='flex text-center text-2xl justify-center gap-4 items-center'>
+                        <p>{players[0].wins || 0}</p>
+                        <TrophyIcon className='h-6 w-6 mb-1' />
+                        <p>{players[1].wins || 0}</p>
                     </div>
                     <div>
                         <p className='text-center'>{activePlayer === role ? "It's your turn!" : "Waiting for opponent..."}</p>
@@ -153,6 +158,10 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
             </div>
         </div >
     )
+}
+
+function getStartingPlayers(): Player[] | (() => Player[]) {
+    return [{ name: "", role: "X", playerId: "", wins: 0 }, { name: "", role: "O", playerId: "", wins: 0 }];
 }
 
 function createBoard(size: number) {

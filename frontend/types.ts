@@ -28,7 +28,8 @@ type Message = | {
 type Player = {
   name: string,
   role: PlayerIdentity,
-  playerId: string
+  playerId: string,
+  wins: number
 }
 
 type SquareValue = "X" | "O" | null
