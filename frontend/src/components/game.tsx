@@ -87,7 +87,6 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
 
     if (!players[1].name) return (
         <>
-            {JSON.stringify(players)}
             <div className='mb-5'>
                 <LoadingSpinner />
             </div>
@@ -120,7 +119,6 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
 
     return (
         <div className='mx-auto'>
-            {JSON.stringify(players)}
             <div className='flex justify-center items-center relative mb-5'>
                 <div>
                     <div className='flex text-center text-2xl justify-center gap-4 items-center'>
