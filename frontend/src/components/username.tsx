@@ -15,16 +15,15 @@ export default function UsernameComponent({
 	setUsername: (username: string) => void;
 	setGameId: (gameId: string) => void;
 }) {
-	async function login(formData: FormData){
-		if(!validateWebSocketFormData(formData)) return toast.error("Please enter a username and game ID")
+
+	async function login(formData: FormData) {
 		const username = formData.get("username") as string
 		const gameId = formData.get("gameId") as string || generateRandomGameId()
-		
+		if (!validateWebSocketFormData({ username, gameId })) return toast.error("Please enter a username and game ID")
+
 		const socket = getSocket({ username, gameId })
 
-		if(!socket) return toast("Error connecting to server")
-
-		console.log("Sind wa drinne wa")
+		if (!socket) return toast("Error connecting to server")
 
 		setUsername(username);
 		setGameId(gameId);
@@ -39,25 +38,15 @@ export default function UsernameComponent({
 		return gameId;
 	}
 
-	
-
-	function validateWebSocketFormData(formData: FormData) {
+	function validateWebSocketFormData({ username, gameId }: { username: string, gameId: string }) {
 		const webSocketSchema = z.object({
 			username: z.string().min(1),
 			gameId: z.string(),
 		});
 
-		const formDataObject = {
-			username: formData.get("username"),
-			gameId: formData.get("gameId")
-		}
-		const result = webSocketSchema.safeParse(formDataObject);	
+		const result = webSocketSchema.safeParse({ username, gameId });
 
-		if (!result.success) {
-			return false
-		}
-
-		return true
+		return result.success;
 	}
 
 	return (

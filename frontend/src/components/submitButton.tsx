@@ -1,12 +1,11 @@
 'use client'
 
-
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { Button } from './ui/button';
 
-
 export function SubmitButton() {
+    const [status, setStatus] = useState();
     const { pending } = useFormStatus();
 
     return (
@@ -17,7 +16,6 @@ export function SubmitButton() {
                 aria-disabled={pending}
                 disabled={pending}
             >
-
                 {pending ? "Joining..." : "Join Game!"}
             </Button>
         </>
