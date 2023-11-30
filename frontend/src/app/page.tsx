@@ -7,6 +7,7 @@ export default function Home() {
 	const [socket, setSocket] = useState<WebSocket | null>(null);
 	const [username, setUsername] = useState("");
 	const [gameId, setGameId] = useState("");
+	const [playerId, setPlayerId] = useState("");
 
 	if (!socket || !username) {
 		return (
@@ -14,6 +15,7 @@ export default function Home() {
 				setSocket={setSocket}
 				setUsername={setUsername}
 				setGameId={setGameId}
+				setPlayerId={setPlayerId}
 			/>
 		);
 	}
@@ -27,7 +29,7 @@ export default function Home() {
 
 	return (
 		<div className="container py-3 ">
-			<Game gameId={gameId} socket={socket} username={username} />
+			<Game gameId={gameId} socket={socket} username={username} playerId={playerId} />
 		</div>
 	);
 

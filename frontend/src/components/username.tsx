@@ -9,11 +9,13 @@ import { SubmitButton } from "./submitButton";
 export default function UsernameComponent({
 	setSocket,
 	setUsername,
-	setGameId
+	setGameId,
+	setPlayerId
 }: {
 	setSocket: (socket: WebSocket) => void;
 	setUsername: (username: string) => void;
 	setGameId: (gameId: string) => void;
+	setPlayerId: (playerId: string) => void;
 }) {
 
 	async function login(formData: FormData) {
@@ -21,7 +23,9 @@ export default function UsernameComponent({
 		const gameId = formData.get("gameId") as string || generateRandomGameId()
 		if (!validateWebSocketFormData({ username, gameId })) return toast.error("Please enter a username and game ID")
 
-		const socket = getSocket({ username, gameId })
+		const playerId = Math.floor(Math.random() * 10000).toString();
+		setPlayerId(playerId);
+		const socket = getSocket({ username, gameId, playerId })
 
 		if (!socket) return toast("Error connecting to server")
 

@@ -5,14 +5,12 @@ import './game.css'
 import LoadingSpinner from './loading-spinner';
 import { TrophyIcon, ClipboardIcon, BoltIcon, ScaleIcon } from '@heroicons/react/24/outline';
 import RestartButton from './restart-button';
-import { set } from 'zod';
-
 
 type Role = "X" | "O"
 
-export default function Game({ socket, username, gameId }: { socket: WebSocket, username: string, gameId: string }) {
+export default function Game({ socket, username, gameId, playerId }: { socket: WebSocket, username: string, gameId: string, playerId: string }) {
     const [board, setBoard] = useState(createBoard(3))
-    const [players, setPlayers] = useState([{ name: "", role: "X" }, { name: "", role: "O" }]);
+    const [players, setPlayers] = useState<Player[]>([{ name: "", role: "X", playerId: "" }, { name: "", role: "O", playerId: "" }]);
     const [activePlayer, setActivePlayer] = useState<Role>("X")
     const [role, setRole] = useState<Role>("X")
     const [winner, setWinner] = useState<string | null>(null)
@@ -33,8 +31,8 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
 
         if (serverMessage.type === "join") {
             setPlayers(serverMessage.players);
-
-            setRole(serverMessage.players.find((player) => player.name === username)?.role || "X");
+            
+            setRole(serverMessage.players.find((player) => player.playerId === playerId)?.role || "X");
 
             console.log(`${serverMessage.username} has joined the game!`);
 
@@ -69,7 +67,6 @@ export default function Game({ socket, username, gameId }: { socket: WebSocket, 
 
         if(serverMessage.type === "restart") {
             console.log("Restarting game")
-            // switch names and roles
             setPlayers([players[1], players[0]]);
             setBoard(createBoard(3));
             setWinner(null);

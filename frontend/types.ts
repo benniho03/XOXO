@@ -1,7 +1,7 @@
 type Message = | {
   type: "join",
   username: string,
-  players: {name: string, role: "X" | "O"}[],
+  players: Player[],
   role: "X" | "O"
 } | {
   type: "leave",
@@ -21,7 +21,13 @@ type Message = | {
   type: "draw"
 } | {
   type: "restart"
-  
+
+}
+
+type Player = {
+  name: string,
+  role: PlayerIdentity,
+  playerId: string
 }
 
 type SquareValue = "X" | "O" | null

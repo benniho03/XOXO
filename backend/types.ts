@@ -20,17 +20,24 @@ export type MoveMessage = {
 
 export type GameInfo = {
   username: string,
-  gameId: string
+  gameId: string,
+  playerId: string
 }
 
 export type Cell = "X" | "O" | null
 
 export type Board = Cell[][]
 
+export type Player = {
+  name: string,
+  role: "X" | "O",
+  playerId: string
+}
+
 export type GameState = {
   gameId: string
   board:  Board
   activePlayer: "X" | "O",
-  players: {name: string, role: "X" | "O"}[],
+  players: Player[],
   restart: boolean
 }

@@ -7,9 +7,9 @@ const server = Bun.serve<GameInfo>({
 		const url = new URL(req.url);
 		const username = url.searchParams.get("username");
 		const gameId = url.searchParams.get("gameId");
+		const playerId = url.searchParams.get("playerId");
 
-
-		if (!username || !gameId) return new Response("Missing username or gameId", { status: 400 });
+		if (!username || !gameId || !playerId) return new Response("Missing username or gameId", { status: 400 });
 
 		const game = games.get(gameId)
 
@@ -18,7 +18,8 @@ const server = Bun.serve<GameInfo>({
 		const success = server.upgrade(req, {
 			data: {
 				username,
-				gameId
+				gameId,
+				playerId
 			},
 		});
 		if (success) return;
@@ -36,10 +37,12 @@ const server = Bun.serve<GameInfo>({
 
 			if (!game.players[0].name) {
 				game.players[0].name = client.data.username
+				game.players[0].playerId = client.data.playerId
 				return
 			}
 
 			game.players[1].name = client.data.username
+			game.players[1].playerId = client.data.playerId
 
 		},
 		async message(client, message) {
@@ -183,7 +186,7 @@ function createDefaultGame(gameId: string): GameState {
 		gameId,
 		board: createBoard(3),
 		activePlayer: "X" as const,
-		players: [{ name: "", role: "X" as const }, { name: "", role: "O" as const }],
+		players: [{ name: "", role: "X" as const, playerId: "" }, { name: "", role: "O" as const, playerId: "" }],
 		restart: false
 	}
 }
