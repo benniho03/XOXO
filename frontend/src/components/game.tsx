@@ -1,5 +1,5 @@
 import { GlutenFont } from '@/lib/utils';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import './game.css'
 import LoadingSpinner from './loading-spinner';
@@ -16,9 +16,13 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
     const [winner, setWinner] = useState<string | null>(null)
     const [draw, setDraw] = useState(false)
 
-    socket.addEventListener("message", (event) => {
-        handleMessage(event);
-    });
+    useEffect(() => {
+        
+        
+
+        socket.removeEventListener("message", handleMessage);
+        socket.addEventListener("message", handleMessage);
+    }, [])
 
 
     function handleMessage(event: MessageEvent<any>) {
@@ -31,7 +35,7 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
 
         if (serverMessage.type === "join") {
             setPlayers(serverMessage.players);
-            
+
             setRole(serverMessage.players.find((player) => player.playerId === playerId)?.role || "X");
 
             console.log(`${serverMessage.username} has joined the game!`);
@@ -65,7 +69,7 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
             setDraw(true);
         }
 
-        if(serverMessage.type === "restart") {
+        if (serverMessage.type === "restart") {
             console.log("Restarting game")
             setPlayers([players[1], players[0]]);
             setBoard(createBoard(3));
@@ -101,14 +105,14 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
         </div>
     )
 
-    if(draw) return (
+    if (draw) return (
         <div className="flex justify-center items-center flex-col">
-        <div className="h-24 w-24 text-slate-900">
-            <ScaleIcon />
+            <div className="h-24 w-24 text-slate-900">
+                <ScaleIcon />
+            </div>
+            <p>Game has resulted in a draw!</p>
+            <RestartButton socket={socket} gameId={gameId} />
         </div>
-        <p>Game has resulted in a draw!</p>
-        <RestartButton socket={socket} gameId={gameId} />
-    </div>
     )
 
     return (
