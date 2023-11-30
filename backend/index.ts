@@ -57,16 +57,15 @@ const server = Bun.serve<GameInfo>({
 
 			switch (clientMessage.type) {
 				case "join":
-					console.log("Join")
+					console.log(`${client.data.username} joined Game #${client.data.gameId}`)
 					return handleJoin({ username: client.data.username, game })
 				case "move":
-					console.log("Move")
+					console.log(`${client.data.username} made a move`)
 					return handleMove({ clientMessage, game });	
 				case "restart":
 					handleRestart(client, game);
 					return
 				default:
-					console.log(clientMessage.type)
 					console.log("Error")
 					return handleError({ gameId: client.data.gameId, errorMessage: "Invalid message type" })
 			}
@@ -102,6 +101,8 @@ function handleRestart(client: ServerWebSocket<GameInfo>, game: GameState) {
 		client.data.gameId,
 		JSON.stringify({
 			type: "restart",
+			board: newGame.board,
+			players: [newGame.players[1], newGame.players[0]]
 		})
 	);
 	games.set(client.data.gameId, newGame);

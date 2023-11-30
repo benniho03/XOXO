@@ -21,7 +21,8 @@ type Message = | {
   type: "draw"
 } | {
   type: "restart"
-
+  board: Board,
+  players: Player[]
 }
 
 type Player = {

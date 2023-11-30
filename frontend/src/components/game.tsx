@@ -17,9 +17,6 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
     const [draw, setDraw] = useState(false)
 
     useEffect(() => {
-        
-        
-
         socket.removeEventListener("message", handleMessage);
         socket.addEventListener("message", handleMessage);
     }, [])
@@ -65,14 +62,19 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
         }
 
         if (serverMessage.type === "draw") {
-            toast("Draw!");
+            toast("Draw!", {
+                icon: '🤝',
+                duration: 1500,
+                className: 'border border-amber-500'
+
+            });
             setDraw(true);
         }
 
         if (serverMessage.type === "restart") {
             console.log("Restarting game")
-            setPlayers([players[1], players[0]]);
-            setBoard(createBoard(3));
+            setPlayers(serverMessage.players);
+            setBoard(serverMessage.board);
             setWinner(null);
             setDraw(false);
             setActivePlayer("X");
@@ -85,6 +87,7 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
 
     if (!players[1].name) return (
         <>
+            {JSON.stringify(players)}
             <div className='mb-5'>
                 <LoadingSpinner />
             </div>
@@ -117,6 +120,7 @@ export default function Game({ socket, username, gameId, playerId }: { socket: W
 
     return (
         <div className='mx-auto'>
+            {JSON.stringify(players)}
             <div className='flex justify-center items-center relative mb-5'>
                 <div>
                     <div className='flex text-center text-2xl justify-center gap-4 items-center'>
